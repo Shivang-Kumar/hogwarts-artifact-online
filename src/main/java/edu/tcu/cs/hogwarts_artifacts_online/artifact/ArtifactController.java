@@ -21,7 +21,7 @@ import edu.tcu.cs.hogwarts_artifacts_online.system.StatusCode;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/artifacts")
+@RequestMapping("${api.endpoint.base-url}/artifacts")
 public class ArtifactController {
 
 	private final ArtifactService artifactService;
@@ -43,7 +43,7 @@ public class ArtifactController {
 		return new Result(true, StatusCode.SUCCESS, "Find one Success", artifactDto);
 	}
 
-	@GetMapping("/artifacts")
+	@GetMapping
 	public Result findAllArtifact() {
 
 		List<Artifact> foundArtifacts = this.artifactService.findAll();
@@ -53,7 +53,7 @@ public class ArtifactController {
 		return new Result(true, StatusCode.SUCCESS, "Find All Success", artifactDtos);
 	}
 
-	@PostMapping("/artifacts")
+	@PostMapping
 	public Result addArtifact(@Valid   @RequestBody ArtifactDto artifactDto) {
 		Artifact newArtifact = this.artifactDtoToArtifactConverter.convert(artifactDto);
 		Artifact savedArtifact = this.artifactService.save(newArtifact);
