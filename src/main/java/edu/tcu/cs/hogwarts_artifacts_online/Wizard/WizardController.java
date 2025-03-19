@@ -27,8 +27,6 @@ public class WizardController {
 	private final WizardToWizardDtoConverter wizardToWizardDtoConverter;
 	private final WizardDtoToWizardConverter wizardDtoToWizardConverter;
 
-
-
 	public WizardController(WizardService wizardService, WizardToWizardDtoConverter wizardToWizardDtoConverter,
 			WizardDtoToWizardConverter wizardDtoToWizardConverter) {
 		super();
@@ -53,29 +51,31 @@ public class WizardController {
 		return new Result(true, StatusCode.SUCCESS, "Add Success", savedWizardDto);
 
 	}
+
 	@GetMapping("/{wizardId}")
-	public Result findWizardById(@PathVariable Integer wizardId)
-	{
-		Wizard foundWizard=this.wizardService.findById(wizardId);
-		WizardDto foundWizardDto=this.wizardToWizardDtoConverter.convert(foundWizard);
-		return new Result(true,StatusCode.SUCCESS,"Find One Success",foundWizardDto);
+	public Result findWizardById(@PathVariable Integer wizardId) {
+		Wizard foundWizard = this.wizardService.findById(wizardId);
+		WizardDto foundWizardDto = this.wizardToWizardDtoConverter.convert(foundWizard);
+		return new Result(true, StatusCode.SUCCESS, "Find One Success", foundWizardDto);
 	}
+
 	@PutMapping("/{wizardId}")
-	public Result updateWizard(@Valid @RequestBody WizardDto updateWizard , @PathVariable Integer wizardId)
-	{
-		Wizard newWizard=this.wizardDtoToWizardConverter.convert(updateWizard);
-		Wizard savedWizard=this.wizardService.updateWizard(wizardId,newWizard);
-		WizardDto savedWizardDto=this.wizardToWizardDtoConverter.convert(savedWizard);
-		return new Result(true,StatusCode.SUCCESS,"Update Success",savedWizardDto);
+	public Result updateWizard(@Valid @RequestBody WizardDto updateWizard, @PathVariable Integer wizardId) {
+		Wizard newWizard = this.wizardDtoToWizardConverter.convert(updateWizard);
+		Wizard savedWizard = this.wizardService.updateWizard(wizardId, newWizard);
+		WizardDto savedWizardDto = this.wizardToWizardDtoConverter.convert(savedWizard);
+		return new Result(true, StatusCode.SUCCESS, "Update Success", savedWizardDto);
 	}
-	
+
 	@DeleteMapping("/{wizardId}")
-	public Result deleteWizard(@PathVariable int wizardId)
-	{
+	public Result deleteWizard(@PathVariable int wizardId) {
 		this.wizardService.deleteWizardById(wizardId);
-		return new Result(true,StatusCode.SUCCESS,"Delete Success");
+		return new Result(true, StatusCode.SUCCESS, "Delete Success");
 	}
-	
 
-
+	@PutMapping("/{wizardId}/artifacts/{artifactId}")
+	public Result assigenArtifact(@PathVariable Integer wizardId, @PathVariable String artifactId) {
+		this.wizardService.assignArtifact(wizardId, artifactId);
+		return new Result(true,StatusCode.SUCCESS,"Artifact Assignment Success");
+	}
 }
