@@ -1,22 +1,32 @@
 package edu.tcu.cs.hogwarts_artifacts_online.user;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import edu.tcu.cs.hogwarts_artifacts_online.system.ObjectNotFoundException;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 	
-	UserRepository userRepository;
+	private UserRepository userRepository;
+	private PasswordEncoder passwordEncoder;
 
-	public UserService(UserRepository userRepository) {
+	
+	
+	
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 		super();
 		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
-	
-	
+
+
 	public List<User> findAllUser(){
 		List<User> allUsers=this.userRepository.findAll();
 		return allUsers;
@@ -24,7 +34,7 @@ public class UserService {
 
 
 	public User addUser(User user) {
-		
+		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
 		return this.userRepository.save(user);
 	}
 	
@@ -49,6 +59,14 @@ public class UserService {
 		
 		User user=this.userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user", userId));
 		this.userRepository.deleteById(userId);
+	}
+
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	return this.userRepository.findByUsername(username)
+				.map(user -> new MyUserPrincipal(user))
+				.orElseThrow(() -> new UsernameNotFoundException("username"+username+" is not found."));
 	}
 
 }

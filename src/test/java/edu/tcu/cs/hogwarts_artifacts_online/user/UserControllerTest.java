@@ -31,7 +31,7 @@ import edu.tcu.cs.hogwarts_artifacts_online.system.StatusCode;
 import edu.tcu.cs.hogwarts_artifacts_online.user.DTO.UserDto;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)//Turning off spring security
 public class UserControllerTest {
 	@Autowired
 	MockMvc mockMvc;
