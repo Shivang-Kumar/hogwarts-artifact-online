@@ -7,6 +7,8 @@ import edu.tcu.cs.hogwarts_artifacts_online.Wizard.Wizard;
 import edu.tcu.cs.hogwarts_artifacts_online.Wizard.WizardRepository;
 import edu.tcu.cs.hogwarts_artifacts_online.artifact.Artifact;
 import edu.tcu.cs.hogwarts_artifacts_online.artifact.ArtifactRepository;
+import edu.tcu.cs.hogwarts_artifacts_online.user.User;
+import edu.tcu.cs.hogwarts_artifacts_online.user.UserService;
 
 
 
@@ -17,13 +19,23 @@ public class DbDataInitializer implements CommandLineRunner {
 	
 	private final WizardRepository wizardRepository; 
 	
+	private final UserService userService;
+	
 	
 
-	public DbDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository) {
+
+
+
+	public DbDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository,
+			UserService userService) {
 		super();
 		this.artifactRepository = artifactRepository;
 		this.wizardRepository = wizardRepository;
+		this.userService = userService;
 	}
+
+
+
 
 
 
@@ -90,8 +102,25 @@ public class DbDataInitializer implements CommandLineRunner {
 		wizardRepository.save(w1);
 		wizardRepository.save(w2);
 		wizardRepository.save(w3);
-		
 		artifactRepository.save(a6);
+		
+		
+		
+		User u1 = new User();
+		u1.setUsername("ABC_1");
+		u1.setRoles("admin");
+		u1.setEnabled(true);
+		u1.setPassword("jkc");
+
+		User u2 = new User();
+		u2.setUsername("ABC_2");
+		u2.setRoles("user");
+		u2.setEnabled(true);
+		u2.setPassword("jhk");
+		
+		this.userService.addUser(u1);
+		this.userService.addUser(u2);
+
 		
 
 	}

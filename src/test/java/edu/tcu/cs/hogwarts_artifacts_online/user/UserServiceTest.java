@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import edu.tcu.cs.hogwarts_artifacts_online.Wizard.Wizard;
 import edu.tcu.cs.hogwarts_artifacts_online.artifact.Artifact;
@@ -28,6 +29,9 @@ public class UserServiceTest {
 
 	@Mock
 	UserRepository userRepository;
+	
+	@Mock
+	PasswordEncoder passwordEncoder;
 
 	@InjectMocks
 	UserService userService;
@@ -78,6 +82,7 @@ public class UserServiceTest {
 		user.setRoles("user");
 
 		given(userRepository.save(user)).willReturn(user);
+		given(this.passwordEncoder.encode(user.getPassword())).willReturn("Encoded Password");
 		// when
 		User savedUser = userService.addUser(user);
 
