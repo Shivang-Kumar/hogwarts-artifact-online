@@ -23,8 +23,11 @@ jobs:
       - name: Build Spring Boot Project
         run: mvn clean package -DskipTests
 
+      - name: Install Railway CLI
+        run: curl -fsSL https://railway.app/install.sh | sh
+
+      - name: Authenticate Railway
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+
       - name: Deploy to Railway
-        uses: railwayapp/cli-action@1.0.6
-        with:
-          service: 5a36d8c5-b701-4d2b-9008-8aec24b699f5  # Replace with your Railway service ID
-          token: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway up
