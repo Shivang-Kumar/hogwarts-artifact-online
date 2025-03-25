@@ -26,8 +26,8 @@ jobs:
       - name: Install Railway CLI
         run: curl -fsSL https://railway.app/install.sh | sh
 
-      - name: Authenticate Railway
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
-
       - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: railway up
+
