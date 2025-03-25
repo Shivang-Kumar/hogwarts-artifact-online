@@ -2,9 +2,14 @@
 FROM eclipse-temurin:17-jdk as builder
 WORKDIR /app
 
-# Copy source code and build with Maven
+# Install Maven
+RUN apt-get update && apt-get install -y maven
+
+# Copy the project source code
 COPY . .
-RUN ./mvnw clean package -DskipTests
+
+# Build with Maven
+RUN mvn clean package -DskipTests
 
 # Second stage: Run the application using layers
 FROM eclipse-temurin:17-jre
