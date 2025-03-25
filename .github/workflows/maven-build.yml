@@ -24,7 +24,7 @@ jobs:
         run: mvn --batch-mode package -DskipTests
 
       - name: Upload target folder as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 
         with:
           name: target-jar
           path: target/*.jar
