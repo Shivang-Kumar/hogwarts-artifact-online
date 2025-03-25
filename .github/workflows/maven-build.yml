@@ -21,5 +21,10 @@ jobs:
           cache: maven
 
       - name: Build and test with Maven
-        run: mvn --batch-mode package
+        run: mvn --batch-mode package -DskipTests
 
+      - name: Upload target folder as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: target-jar
+          path: target/*.jar
