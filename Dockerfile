@@ -1,39 +1,26 @@
-# First stage: Build the JAR inside the container
-FROM eclipse-temurin:17-jdk as builder
+# ======== Stage 1: Build Application ========
+FROM maven:3.9-eclipse-temurin-17 AS build
+
+# Set working directory
 WORKDIR /app
 
-# Install Maven
-RUN apt-get update && apt-get install -y maven
-
-# Copy the project source code
+# Copy project files
 COPY . .
 
-# Build with Maven
+# Build the application (skip tests for faster build)
 RUN mvn clean package -DskipTests
 
-# Ensure target folder and JAR exist
-RUN ls -l target/
-
-# Second stage: Run the application using layers
+# ======== Stage 2: Run Application ========
 FROM eclipse-temurin:17-jre
-WORKDIR /application
 
-# Copy the JAR from the build stage
-COPY --from=builder /app/target/*.jar application.jar
+# Set working directory
+WORKDIR /app
 
-# Extract JAR layers
-RUN java -Djarmode=layertools -jar application.jar extract
+# Copy JAR from the build stage
+COPY --from=build /app/target/*.jar app.jar
 
-# Debugging: Check extracted files
-RUN ls -l
-
-# Copy extracted JAR layers (Make sure the paths match)
-COPY --from=builder /application/dependencies/ ./dependencies/
-COPY --from=builder /application/spring-boot-loader/ ./spring-boot-loader/
-COPY --from=builder /application/snapshot-dependencies/ ./snapshot-dependencies/
-COPY --from=builder /application/application/ ./application/
-
-# Set entrypoint
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
-
+# Expose the application port
 EXPOSE 8080
+
+# Run the application
+CMD ["java", "-jar", "app.jar"]
