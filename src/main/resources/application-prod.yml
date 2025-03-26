@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: ${datasource-url}  
+    username: ${datasource-username}   #url of mysql in railway
+    password: ${datasource-password}   #password of mysql in railway
+  jpa:
+    hibernate:
+      ddl-auto: none #Turning off ddl auto generation
