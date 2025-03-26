@@ -19,12 +19,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import edu.tcu.cs.hogwarts_artifacts_online.Wizard.Wizard;
 import edu.tcu.cs.hogwarts_artifacts_online.artifact.Artifact;
 import edu.tcu.cs.hogwarts_artifacts_online.system.ObjectNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles(value="dev")
 public class UserServiceTest {
 
 	@Mock

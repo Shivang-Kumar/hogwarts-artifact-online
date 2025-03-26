@@ -1,6 +1,7 @@
 package edu.tcu.cs.hogwarts_artifacts_online.system;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import edu.tcu.cs.hogwarts_artifacts_online.Wizard.Wizard;
@@ -13,6 +14,7 @@ import edu.tcu.cs.hogwarts_artifacts_online.user.UserService;
 
 
 @Component
+@Profile("dev")
 public class DbDataInitializer implements CommandLineRunner {
 	
 	private final ArtifactRepository artifactRepository;

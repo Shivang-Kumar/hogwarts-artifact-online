@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,7 @@ import edu.tcu.cs.hogwarts_artifacts_online.system.StatusCode;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)//Turning off spring security
+@ActiveProfiles(value="dev")
 public class ArtifactControllerTest {
 
 	@Autowired

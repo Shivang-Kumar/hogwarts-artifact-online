@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -25,6 +27,7 @@ import edu.tcu.cs.hogwarts_artifacts_online.system.ObjectNotFoundException;
 import net.bytebuddy.NamingStrategy.Suffixing.BaseNameResolver.ForGivenType;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles(value="dev")
 public class ArtifactServiceTest {
 
 	@Mock

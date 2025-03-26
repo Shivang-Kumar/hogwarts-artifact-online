@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -29,6 +30,7 @@ import edu.tcu.cs.hogwarts_artifacts_online.artifact.utils.IdWorker;
 import edu.tcu.cs.hogwarts_artifacts_online.system.ObjectNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles(value="dev")
 public class WizardServiceTest {
 
 	@Mock
