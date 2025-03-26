@@ -1,0 +1,21 @@
+name: CD - Deploy to Railway
+
+on:
+  push:
+    branches:
+      - main  # Deploy only when code is pushed to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        run: railway up --service 5a36d8c5-b701-4d2b-9008-8aec24b699f5
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_DEPLOYMENT_TOKEN }}
