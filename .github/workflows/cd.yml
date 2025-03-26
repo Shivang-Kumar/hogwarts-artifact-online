@@ -16,6 +16,6 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Deploy to Railway
-        run: railway up --service 5a36d8c5-b701-4d2b-9008-8aec24b699f5
+        run: railway up --service hogwarts-artifact-online
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_DEPLOYMENT_TOKEN }}
