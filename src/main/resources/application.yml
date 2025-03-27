@@ -4,3 +4,32 @@ spring:
 api:
   endpoint:
     base-url: /api/v1
+management:
+  endpoints:
+    web:
+     exposure:
+       include: health,info, metrics,env,beans,configprops,heapdump, httpexchanges,loggers,mappings,custom-beans
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  info:
+    build:
+      enabled: true
+    env:
+      enabled: true
+    git:
+      enabled: true
+      mode: full
+
+    java:
+      enabled: true
+    os:
+      enabled: true
+info:
+  app:
+    name: hogwarts-artifact-online
+    description: A web application that manages artifacts and wizards for hogwarts school of witchcraft
+    version: 0.0.1-snapshot
+    author: Shiv
