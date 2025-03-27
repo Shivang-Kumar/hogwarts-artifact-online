@@ -74,7 +74,7 @@ public class SecurityConfiguration {
 						.requestMatchers(HttpMethod.POST, this.baseUrl + "/users").hasAuthority("ROLE_admin")
 						.requestMatchers(HttpMethod.PUT, this.baseUrl + "/users/**").hasAuthority("ROLE_admin")
 						.requestMatchers(HttpMethod.DELETE, this.baseUrl + "/users/**").hasAuthority("ROLE_admin")
-						.requestMatchers(EndpointRequest.to("health","info")).permitAll()
+						.requestMatchers(EndpointRequest.to("health","info","prometheus")).permitAll()
 						.requestMatchers(EndpointRequest.toAnyEndpoint().excluding("health","info")).hasAnyAuthority("ROLE_admin")
 						.requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
 						// All other request is to be authenticated
