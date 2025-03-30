@@ -276,6 +276,25 @@ public class ArtifactControllerTest {
 
 	}
 	
+	@Test
+	void testSummarizeArtifactSuccess() throws Exception {
+		//Given 
+		
+		given(this.artifactService.summarize(Mockito.anyList())).willReturn("The summary inclues six artifacts");
+
+
+	
+
+		// When and Then
+		this.mockMvc
+				.perform(get(this.baseUrl+"/artifacts/summary")
+				.accept(org.springframework.http.MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.flag").value(true)).andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+				.andExpect(jsonPath("$.message").value("Summarize Success"))
+				.andExpect(jsonPath("$.data").value("The summary inclues six artifacts"));
+		
+	}
+	
 	
 	
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,6 +18,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tcu.cs.hogwarts_artifacts_online.system.ObjectNotFoundException;
 import edu.tcu.cs.hogwarts_artifacts_online.system.Result;
@@ -44,27 +51,49 @@ public class ExceptionHandlerAdvice {
 		return new Result(false, StatusCode.INVALID_ARGUMENT, "Provided arguments are invalid , see data for details.",
 				map);
 	}
-	
-	@ExceptionHandler({InsufficientAuthenticationException.class})
+
+	@ExceptionHandler({ InsufficientAuthenticationException.class })
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	Result handleInsufficientAuthenticationException(InsufficientAuthenticationException ex)
+	Result handleInsufficientAuthenticationException(InsufficientAuthenticationException ex) {
+		return new Result(false, StatusCode.UNAUTHORIZED, "Log in credentials are missing", ex.getMessage());
+	}
+
+	@ExceptionHandler({ UsernameNotFoundException.class, BadCredentialsException.class })
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	Result handleAuthenticationException(Exception ex) {
+		return new Result(false, StatusCode.UNAUTHORIZED, "username or password is incorrect", ex.getMessage());
+	}
+
+	@ExceptionHandler({ AccountStatusException.class })
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	Result handlAccountStatusException(AccountStatusException ex) {
+		return new Result(false, StatusCode.UNAUTHORIZED, "User account is abnormal", ex.getMessage());
+	}
+
+	// Related t open API exception
+	@ExceptionHandler({HttpClientErrorException.class, HttpStatusCodeException.class})
+
+	ResponseEntity<Result> handlRestClientExceptionException(HttpStatusCodeException ex)
 	{
-		return new Result(false,StatusCode.UNAUTHORIZED,"Log in credentials are missing",ex.getMessage());
+		String errorResponse = ex.getResponseBodyAsString();
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode root;
+		String message;
+		try {
+		    root = objectMapper.readTree(errorResponse);
+		    message = root.path("error").path("message").asText();
+		    System.out.println("Extracted Message: " + message);
+		} catch (JsonProcessingException e) {
+		    e.printStackTrace();
+		    message = "Could not process the request";
+		}
+		return new ResponseEntity<>(new Result(false, ex.getStatusCode().value(), 
+		    "A rest client error occurs, see data for details", message), ex.getStatusCode());
+
+	          
 	}
 	
-	@ExceptionHandler({UsernameNotFoundException.class,BadCredentialsException.class})
-	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	Result handleAuthenticationException(Exception ex)
-	{
-		return new Result(false,StatusCode.UNAUTHORIZED,"username or password is incorrect",ex.getMessage());
-	}
 	
-	@ExceptionHandler({AccountStatusException.class})
-	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	Result handlAccountStatusException(AccountStatusException ex)
-	{
-		return new Result(false,StatusCode.UNAUTHORIZED,"User account is abnormal",ex.getMessage());
-	}
 	
 	@ExceptionHandler({InvalidBearerTokenException.class})
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -72,24 +101,17 @@ public class ExceptionHandlerAdvice {
 	{
 		return new Result(false,StatusCode.UNAUTHORIZED,"The access token provided is expired, revoked , malformed or invalid for other reasons.",ex.getMessage());
 	}
-	
-	
-	@ExceptionHandler({AccessDeniedException.class})
+
+	@ExceptionHandler({ AccessDeniedException.class })
 	@ResponseStatus(HttpStatus.FORBIDDEN)
-	Result handleAccessDeniedException(AccessDeniedException ex)
-	{
-		return new Result(false,StatusCode.FORBIDDEN,"No permission.",ex.getMessage());
+	Result handleAccessDeniedException(AccessDeniedException ex) {
+		return new Result(false, StatusCode.FORBIDDEN, "No permission.", ex.getMessage());
 	}
-	
-	@ExceptionHandler({Exception.class})
+
+	@ExceptionHandler({ Exception.class })
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	Result handleOtherException(Exception ex)
-	{
-		return new Result(false,StatusCode.INTERNAL_SERVER_ERROR,"A server internal error occurs.",ex.getMessage());
+	Result handleOtherException(Exception ex) {
+		return new Result(false, StatusCode.INTERNAL_SERVER_ERROR, "A server internal error occurs.", ex.getMessage());
 	}
-	
-	
-	
-	
 
 }

@@ -16,13 +16,25 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import edu.tcu.cs.hogwarts_artifacts_online.Wizard.Wizard;
+import edu.tcu.cs.hogwarts_artifacts_online.Wizard.dto.WizardDto;
+import edu.tcu.cs.hogwarts_artifacts_online.artifact.DTO.ArtifactDto;
 import edu.tcu.cs.hogwarts_artifacts_online.artifact.utils.IdWorker;
+import edu.tcu.cs.hogwarts_artifacts_online.client.ai.chat.ChatClient;
+import edu.tcu.cs.hogwarts_artifacts_online.client.ai.chat.dto.Candidate;
+import edu.tcu.cs.hogwarts_artifacts_online.client.ai.chat.dto.ChatRequest;
+import edu.tcu.cs.hogwarts_artifacts_online.client.ai.chat.dto.ChatResponse;
+import edu.tcu.cs.hogwarts_artifacts_online.client.ai.chat.dto.Content;
+import edu.tcu.cs.hogwarts_artifacts_online.client.ai.chat.dto.Part;
 import edu.tcu.cs.hogwarts_artifacts_online.system.ObjectNotFoundException;
 import net.bytebuddy.NamingStrategy.Suffixing.BaseNameResolver.ForGivenType;
 
@@ -36,8 +48,17 @@ public class ArtifactServiceTest {
 	@Mock
 	IdWorker idWorker;
 
+	
+	
+	@Mock
+	ChatClient chatClient;
+	
+	@Mock
+	ObjectMapper objectMapper;
+	
 	@InjectMocks
 	ArtifactService artifactService;
+	
 
 	List<Artifact> artifacts;
 
@@ -250,6 +271,31 @@ public class ArtifactServiceTest {
 		verify(artifactRepository,times(1)).findById("13445324535632");
 		
 	}
+	
+	@Test
+	void testSummarizeSuccess() throws Exception {
+		//Given
+		WizardDto wizardDto=new WizardDto(1, "Albus dumbeldore", 2);
+		List<ArtifactDto> artifactDto=List.of(
+				new ArtifactDto("123456","Deluminitor","Deluminitor is a good device",null,wizardDto),
+				new ArtifactDto("123456789","Deluminitor2","Deluminitor is a good device 2",null,wizardDto)
+				);
+		
+		
+		ChatRequest chatRequest=new ChatRequest(List.of(new Content(List.of(new Part("What is elder wand")))));
+		ChatResponse chatResponse=new ChatResponse(List.of(new Candidate((new Content(List.of(new Part("The Elder Wand is a powerful, legendary wand in the Harry Potter series, known for being the most powerful wand ever created.")))))));
+		
+		
+
+		when(chatClient.generate(any(ChatRequest.class))).thenReturn(chatResponse);
+
+		
+		//When
+		String summary=this.artifactService.summarize(artifactDto);
+		//Then
+		assertThat(summary).isEqualTo("The Elder Wand is a powerful, legendary wand in the Harry Potter series, known for being the most powerful wand ever created.");
+		verify(this.chatClient,times(1)).generate(any(ChatRequest.class));
+		}
 	
 	
 }
