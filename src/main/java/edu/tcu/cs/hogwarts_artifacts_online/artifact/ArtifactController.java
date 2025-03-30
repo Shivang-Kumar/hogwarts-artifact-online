@@ -81,5 +81,15 @@ public class ArtifactController {
 	{  this.artifactService.delete(artifactId);
 		return new Result(true,StatusCode.SUCCESS,"Delete Success");
 	}
+	
+	
+	@GetMapping("/summary")
+    public Result summarizeArtifact() throws Exception {
+		List<Artifact> foundArtifacts=this.artifactService.findAll();
+		
+		List<ArtifactDto> artifactDtos=foundArtifacts.stream().map(found -> this.artifactDtoConverter.convert(found)).collect(Collectors.toList());
+		String artifactSummary=this.artifactService.summarize(artifactDtos);
+	     return new Result(true,StatusCode.SUCCESS,"Summarize Success",artifactSummary);
+	}
 
 }
